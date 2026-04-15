@@ -1,0 +1,317 @@
+---
+title: "STM32 code - kinematics"
+---
+
+## Ackerman Car
+
+### Kinematic (Forward) Calculation
+
+$v_L,\,v_R,\,\delta_l \mapsto v_x,\,v_y,\,\omega$, where
+
+- $v_L$ is the left wheel speed (in m/s)
+- $v_R$ is the right wheel speed (in m/s)
+- $\delta_l$ is the steering angle of the left front wheel (in radians)
+- $v_x$ is the vehicle's forward velocity (in m/s)
+- $v_y$ is the vehicle's lateral velocity (in m/s)
+- $\omega$ is the vehicle's yaw rate (in rad/s)
+
+Equations:
+\begin{equation}
+v_x = \frac{v_L + v_R}{2}
+\end{equation}
+\begin{equation}
+v_y = \frac{\ell_r}{L\cot\delta_l + \frac{W}{2}} \cdot v_x
+\end{equation}
+\begin{equation}
+\omega = \frac{v_R - v_L}{W}
+\end{equation}
+where $\ell_r$ is the distance from the rear axle to the center of mass, $L$ is the wheelbase, and $W$ is the track width.
+
+Code (**need corrections** for $v_y$ calculation):
+
+```{c}
+/**************************************************************************
+Function Purpose: akm/diff Kinematic Analysis
+Input Parameters: Left wheel speed, Right wheel speed, in meters per second (m/s)
+Return Value: Robot's x, y, z velocities
+Author: WHEELTEC
+函数功能：阿克曼/差速 运动学正解
+入口参数：左轮速度、右轮速度,单位 m/s
+返回  值：机器人x、y、z三轴速度
+作    者：WHEELTEC
+**************************************************************************/
+#if defined AKM_CAR || defined DIFF_CAR
+static float* Kinematics_akm_diff(float motorA,float motorB)
+{
+	static float vel[3];
+	//xyz三轴计算速度
+	vel[0] = (motorA + motorB)/2.0f;
+	vel[1] = 0;
+	vel[2] = (motorB - motorA)/robot.HardwareParam.WheelSpacing;
+	
+	return vel;
+}
+```
+
+### Inverse Kinematics Calculation
+
+$v_x,\,\omega \mapsto v_L,\,v_R$
+
+Equations:
+\begin{equation}
+v_L = v_x - \frac{\omega W}{2}
+\end{equation}
+\begin{equation}
+v_R = v_x + \frac{\omega W}{2}
+\end{equation}
+\begin{equation}
+\delta_l = \mathrm{atan}\frac{L}{\frac{v_x}{\omega} - \frac{W}{2}}
+\end{equation}
+
+```{c}
+/**************************************************************************
+Function function: Ackermann inverse kinematics solution
+Entrance parameters: X-axis velocity (in m/s), left front wheel angle (in rad)
+Return value: None
+Author: WHEELTEC
+函数功能：阿克曼运动学逆解
+入口参数：X轴的速度(单位m/s)，左前轮的转角(单位rad)
+返回  值：无
+作    者：WHEELTEC
+**************************************************************************/
+static void InverseKinematics_akm(float Vx,float Vz) 
+{
+	//运动学分析前,优先采集舵机的电位器校准值,以便运动学分析结果调用
+	Akm_Servo.Bias = -get_DMA_ServoBias() / 5.0f;
+    
+    if ( ... )  // other types of ackerman cars
+    {
+        // similar calculations for other types of ackerman cars
+    }
+    else if ( robot.type==4 || robot.type==5 )  // 大车
+    {
+        //转弯半径、左轮角度
+        float TurnR = 0, Left_Angle = 0;
+        
+        //对于阿克曼小车Vz代表左前轮转向角度
+        Left_Angle = Vz;
+        
+        //限制左右转向的角度
+        const float limt_angle = 25.0f;
+        
+        //计算角度时的连杆距离K
+        const float K = 0.441f;
+        
+        //左极限的转弯半径
+        float bd_turnR = robot.HardwareParam.AxleSpacing/tan(angle_to_rad(limt_angle)) + 0.5f*K;
+        
+        //根据极限转弯半径,计算往右转时候的左轮角度
+        float bd_rightAngle = atan(robot.HardwareParam.AxleSpacing/((-bd_turnR)-0.5f*K));
+        
+        //前轮转向角度限幅(舵机控制前轮转向角度)，单位：rad
+        Left_Angle=target_limit_float(Left_Angle,bd_rightAngle,angle_to_rad(limt_angle));//注: 左+ 右-
+        
+        //滑轨目标值计算：
+        robot.SERVO.Target = SteeringStructure_Reverse(Left_Angle);
+        
+        //根据转向角度计算出当前的转弯半径
+        if(Left_Angle!=0)
+            TurnR = robot.HardwareParam.AxleSpacing/tan(Left_Angle) + 0.5f*K;
+        
+        //左右轮目标值计算：
+        //根据转弯半径、轮距,逆解出左右轮的速度
+        //Inverse kinematics //运动学逆解
+        if(Left_Angle!=0)
+        {
+            robot.MOTOR_A.Target = Vx*(TurnR-0.5f*robot.HardwareParam.WheelSpacing)/TurnR;
+            robot.MOTOR_B.Target = Vx*(TurnR+0.5f*robot.HardwareParam.WheelSpacing)/TurnR;
+        }
+        else //不带转向的控制
+        {
+            robot.MOTOR_A.Target = Vx;
+            robot.MOTOR_B.Target = Vx;
+        }
+    }
+}
+
+/**************************************************************************
+Function function: Convert the target forward velocity Vx and target angular velocity Vz sent by
+                the upper computer into the left front wheel steering angle of the Ackermann car
+Entrance parameters: target forward velocity Vx, target angular velocity Vz, unit: m/s, rad/s
+Return value: Left front wheel steering angle of Ackermann car, unit: rad
+函数功能：将上位机发过来目标前进速度Vx、目标角速度Vz，转换为阿克曼小车的左前轮转角
+入口参数：目标前进速度Vx、目标角速度Vz，单位：m/s，rad/s
+返回  值：阿克曼小车的左前轮转角，单位：rad
+**************************************************************************/
+float Akm_Vz_to_Angle(float Vx,float Vz)
+{
+    float TurnR, Angle_Left;//转弯半径,左前轮角度
+
+    if(Vz!=0 && Vx!=0)
+    {
+		//计算转弯半径
+		TurnR = Vx/Vz;
+		
+        //确保转弯半径不会超出运动学公式的计算范围内
+        if( TurnR > 0 && TurnR <= 0.5f*robot.HardwareParam.WheelSpacing ) TurnR = 0.5f*robot.HardwareParam.WheelSpacing+0.01f;
+        if( TurnR < 0 && TurnR >= -0.5f*robot.HardwareParam.WheelSpacing ) TurnR = -0.5f*robot.HardwareParam.WheelSpacing-0.01f;
+		
+		//根据转弯半径确定左前轮转角弧度
+		Angle_Left=atan(robot.HardwareParam.AxleSpacing/(TurnR - 0.5f*robot.HardwareParam.WheelSpacing));
+
+    }
+    else
+    {
+        Angle_Left=0;
+    }
+
+    return Angle_Left;
+}
+```
+
+## 4WD Car (Differential Steering)
+
+### Kinematic (Forward) Calculation
+
+$v_A,\,v_B,\,v_C,\,v_D \mapsto v_x,\,v_y,\,\omega$, where
+
+- $v_A$ is the speed of motor A (left rear) (in m/s)
+- $v_B$ is the speed of motor B (left front) (in m/s)
+- $v_C$ is the speed of motor C (right front) (in m/s)
+- $v_D$ is the speed of motor D (right rear) (in m/s)
+
+Equations:
+\begin{equation}
+v_x = \frac{v_A + v_B + v_C + v_D}{4}
+\end{equation}
+\begin{equation}
+v_y = 0
+\end{equation}
+\begin{equation}
+\omega = \frac{-v_A - v_B + v_C + v_D}{2W}
+\end{equation}
+
+Code (**need corrections** for $v_y$ and $\omega$ calculations):
+
+```{c}
+/**************************************************************************
+Function Purpose: mec/4wd Kinematic Analysis
+Input Parameters: Robot's four-wheel speeds, in meters per second (m/s).
+Return Value: Robot's x, y, z velocities
+Author: WHEELTEC
+函数功能：麦轮/四驱 运动学正解
+入口参数：机器人四个轮的速度,单位 m/s
+返回  值：机器人x、y、z三轴速度
+作    者：WHEELTEC
+**************************************************************************/
+#elif defined MEC_CAR || defined _4WD_CAR
+static float* Kinematics_mec_4wd(float motorA,float motorB,float motorC,float motorD)
+{
+	static float vel[3];
+	//xyz三轴计算速度
+	vel[0] = (motorA+motorB+motorC+motorD)/4.0f;
+	vel[1] = (motorA-motorB+motorC-motorD)/4.0f;
+	vel[2] = (-motorA-motorB+motorC+motorD)/4.0f/( robot.HardwareParam.WheelSpacing + robot.HardwareParam.AxleSpacing );
+	
+	return vel;
+}
+```
+
+
+### Inverse Kinematics Calculation
+
+$v_x,\,\omega \mapsto v_A,\,v_B,\,v_C,\,v_D$
+
+Equations:
+\begin{equation}
+v_A = v_B = v_x - \frac{\omega W}{2}
+\end{equation}
+\begin{equation}
+v_C = v_D = v_x + \frac{\omega W}{2}
+\end{equation}
+
+Code (**need corrections**):
+
+```{c}
+/**************************************************************************
+Function function: inverse kinematics solution of four-wheel drive robot
+Entrance parameters: X-axis velocity (in m/s), Y-axis velocity (in m/s), Z-axis velocity (in rad/s)
+Return value: None
+Author  :WHEELTEC
+函数功能：四驱机器人运动学逆解
+入口参数：X轴速度(单位m/s)、Y轴速度(m/s)、Z轴速度(rad/s)
+返回  值：无
+作    者：WHEELTEC
+**************************************************************************/
+#elif defined _4WD_CAR
+static void InverseKinematics_4wd(float Vx,float Vz)
+{
+    robot.MOTOR_A.Target = Vx-Vz*(robot.HardwareParam.AxleSpacing+robot.HardwareParam.WheelSpacing);
+    robot.MOTOR_B.Target = Vx-Vz*(robot.HardwareParam.AxleSpacing+robot.HardwareParam.WheelSpacing);
+    robot.MOTOR_C.Target = Vx+Vz*(robot.HardwareParam.AxleSpacing+robot.HardwareParam.WheelSpacing);
+    robot.MOTOR_D.Target = Vx+Vz*(robot.HardwareParam.AxleSpacing+robot.HardwareParam.WheelSpacing);
+}
+```
+
+## Appendix: Values of Parameters {-}
+
+### Ackerman Car (当前车型：顶配独立悬挂阿克曼) {-}
+
+```{c}
+#if defined AKM_CAR
+	//阿克曼小车拥有的车型数量
+	#define CAR_NUMBER    10    
+	//Wheel_spacing //轮距
+	#define   SENIOR_AKM_wheelspacing  0.322f //高配阿克曼
+	#define   TOP_AKM_BS_wheelspacing  0.508f //顶配摆式悬挂阿克曼
+	#define   TOP_AKM_DL_wheelspacing  0.585f //顶配独立悬挂阿克曼
+	
+	//Axle_spacing //轴距
+	#define   SENIOR_AKM_axlespacing   0.322f //高配阿克曼
+	#define   TOP_AKM_BS_axlespacing   0.590f //顶配摆式悬挂阿克曼
+	#define   TOP_AKM_DL_axlespacing   0.530f //顶配独立悬挂阿克曼
+	
+	//Diameter of trolley tire
+	//小车轮胎直径
+	#define   SENIOR_AKM_WheelDiameter  0.125 //高配阿克曼
+	#define   TOP_AKM_BS_WheelDiameter  0.180 //顶配摆式悬挂阿克曼
+	#define   TOP_AKM_DL_WheelDiameter  0.254 //顶配独立悬挂阿克曼
+
+	//The minimum turning radius of different Ackermann models is determined by the mechanical structure:
+	//the maximum Angle of the wheelbase, wheelbase and front wheel
+	//不同阿克曼车型的最小转弯半径，由机械结构决定：轮距、轴距、前轮最大转角
+	#define   SENIOR_AKM_MIN_TURN_RADIUS  0.750f //高配阿克曼
+	#define   TOP_AKM_BS_MIN_TURN_RADIUS  1.400f //顶配摆式悬挂阿克曼
+	#define   TOP_AKM_DL_MIN_TURN_RADIUS  1.200f //顶配独立悬挂阿克曼
+```
+
+### 4WD Car (当前车型：高配摆式) {-}
+
+```{c}
+#elif defined _4WD_CAR
+	//四驱小车的车型数量
+	#define CAR_NUMBER    13    
+	//half wheelspacing //半轮距
+	#define SENIOR_4WD_BS_wheelspacing   0.176 //高配摆式常规、重载
+	#define SENIOR_4WD_DL_wheelspacing   0.230 //高配独立常规
+	#define TOP_4WD_BS_wheelspacing      0.311 //顶配摆式常规、重载
+	#define TOP_4WD_DL_wheelspacing      0.295 //顶配独立常规、重载
+	#define FlagShip_4WD_BS_wheelspacing 0.286 //旗舰摆式常规、重载
+	#define FlagShip_4WD_DL_wheelspacing 0.24  //旗舰独立常规、重载
+
+	//half axlespacing //半轴距
+	#define SENIOR_4WD_BS_axlespacing   0.150 //高配摆式常规、重载
+	#define SENIOR_4WD_DL_axlespacing   0.20  //高配独立常规
+	#define TOP_4WD_BS_axlespacing      0.308 //顶配摆式常规、重载
+	#define TOP_4WD_DL_axlespacing      0.201 //顶配独立常规、重载
+	#define FlagShip_4WD_BS_axlespacing 0.167 //旗舰摆式常规、重载
+	#define FlagShip_4WD_DL_axlespacing 0.14  //旗舰独立常规、重载
+
+	//4WD wheel tire diameter series
+	//四驱车轮胎直径
+	#define  WheelDiameter_4WD_152  0.152f //高配
+	#define  WheelDiameter_4WD_225  0.225f //顶配 & 旗舰
+	#define	 WheelDiameter_4WD_250  0.250f
+```
+
+Notice that the wheel spacing and axle spacing for 4WD cars are **half values**, $\frac{W}{2}$ and $\frac{L}{2}$.

@@ -1,0 +1,28 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Platform Documentation"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: about.qmd
+        text: About
+      - href: code_kinematics.qmd
+        text: Kinematics Code
+
+format:
+  html:
+    page-layout: full
+    toc: true
+    number-sections: true
+    number-depth: 5
+    theme:
+      - cosmo
+      - brand
+    css: styles.css
+
+
+
