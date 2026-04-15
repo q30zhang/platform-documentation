@@ -29,7 +29,7 @@ where $\ell_r$ is the distance from the rear axle to the center of mass, $L$ is 
 
 Code (**need corrections** for $v_y$ calculation):
 
-```{c}
+```c
 /**************************************************************************
 Function Purpose: akm/diff Kinematic Analysis
 Input Parameters: Left wheel speed, Right wheel speed, in meters per second (m/s)
@@ -68,7 +68,7 @@ v_R = v_x + \frac{\omega W}{2}
 \delta_l = \mathrm{atan}\frac{L}{\frac{v_x}{\omega} - \frac{W}{2}}
 \end{equation}
 
-```{c}
+```c
 /**************************************************************************
 Function function: Ackermann inverse kinematics solution
 Entrance parameters: X-axis velocity (in m/s), left front wheel angle (in rad)
@@ -193,7 +193,7 @@ v_y = 0
 
 Code (**need corrections** for $v_y$ and $\omega$ calculations):
 
-```{c}
+```c
 /**************************************************************************
 Function Purpose: mec/4wd Kinematic Analysis
 Input Parameters: Robot's four-wheel speeds, in meters per second (m/s).
@@ -232,7 +232,7 @@ v_C = v_D = v_x + \frac{\omega W}{2}
 
 Code (**need corrections**):
 
-```{c}
+```c
 /**************************************************************************
 Function function: inverse kinematics solution of four-wheel drive robot
 Entrance parameters: X-axis velocity (in m/s), Y-axis velocity (in m/s), Z-axis velocity (in rad/s)
@@ -257,7 +257,7 @@ static void InverseKinematics_4wd(float Vx,float Vz)
 
 ### Ackerman Car (当前车型：顶配独立悬挂阿克曼) {-}
 
-```{c}
+```c
 #if defined AKM_CAR
 	//阿克曼小车拥有的车型数量
 	#define CAR_NUMBER    10    
@@ -287,7 +287,7 @@ static void InverseKinematics_4wd(float Vx,float Vz)
 
 ### 4WD Car (当前车型：高配摆式) {-}
 
-```{c}
+```c
 #elif defined _4WD_CAR
 	//四驱小车的车型数量
 	#define CAR_NUMBER    13    

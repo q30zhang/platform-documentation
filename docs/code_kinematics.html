@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -208,27 +243,27 @@ v_y = \frac{\ell_r}{L\cot\delta_l + \frac{W}{2}} \cdot v_x
 \omega = \frac{v_R - v_L}{W}
 \end{equation}\]</span> where <span class="math inline">\(\ell_r\)</span> is the distance from the rear axle to the center of mass, <span class="math inline">\(L\)</span> is the wheelbase, and <span class="math inline">\(W\)</span> is the track width.</p>
 <p>Code (<strong>need corrections</strong> for <span class="math inline">\(v_y\)</span> calculation):</p>
-<pre class="{c}"><code>/**************************************************************************
-Function Purpose: akm/diff Kinematic Analysis
-Input Parameters: Left wheel speed, Right wheel speed, in meters per second (m/s)
-Return Value: Robot's x, y, z velocities
-Author: WHEELTEC
-函数功能：阿克曼/差速 运动学正解
-入口参数：左轮速度、右轮速度,单位 m/s
-返回  值：机器人x、y、z三轴速度
-作    者：WHEELTEC
-**************************************************************************/
-#if defined AKM_CAR || defined DIFF_CAR
-static float* Kinematics_akm_diff(float motorA,float motorB)
-{
-    static float vel[3];
-    //xyz三轴计算速度
-    vel[0] = (motorA + motorB)/2.0f;
-    vel[1] = 0;
-    vel[2] = (motorB - motorA)/robot.HardwareParam.WheelSpacing;
-    
-    return vel;
-}</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">/**************************************************************************</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">Function Purpose: akm/diff Kinematic Analysis</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">Input Parameters: Left wheel speed, Right wheel speed, in meters per second (m/s)</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">Return Value: Robot's x, y, z velocities</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">Author: WHEELTEC</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">函数功能：阿克曼/差速 运动学正解</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">入口参数：左轮速度、右轮速度,单位 m/s</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">返回  值：机器人x、y、z三轴速度</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">作    者：WHEELTEC</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">**************************************************************************/</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="pp">#if defined AKM_CAR || defined DIFF_CAR</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="dt">static</span> <span class="dt">float</span><span class="op">*</span> Kinematics_akm_diff<span class="op">(</span><span class="dt">float</span> motorA<span class="op">,</span><span class="dt">float</span> motorB<span class="op">)</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">static</span> <span class="dt">float</span> vel<span class="op">[</span><span class="dv">3</span><span class="op">];</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">//xyz三轴计算速度</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    vel<span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">=</span> <span class="op">(</span>motorA <span class="op">+</span> motorB<span class="op">)/</span><span class="fl">2.0</span><span class="bu">f</span><span class="op">;</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    vel<span class="op">[</span><span class="dv">1</span><span class="op">]</span> <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    vel<span class="op">[</span><span class="dv">2</span><span class="op">]</span> <span class="op">=</span> <span class="op">(</span>motorB <span class="op">-</span> motorA<span class="op">)/</span>robot<span class="op">.</span>HardwareParam<span class="op">.</span>WheelSpacing<span class="op">;</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> vel<span class="op">;</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="inverse-kinematics-calculation" class="level3" data-number="1.2">
 <h3 data-number="1.2" class="anchored" data-anchor-id="inverse-kinematics-calculation"><span class="header-section-number">1.2</span> Inverse Kinematics Calculation</h3>
@@ -240,104 +275,104 @@ v_R = v_x + \frac{\omega W}{2}
 \end{equation}\]</span> <span class="math display">\[\begin{equation}
 \delta_l = \mathrm{atan}\frac{L}{\frac{v_x}{\omega} - \frac{W}{2}}
 \end{equation}\]</span></p>
-<pre class="{c}"><code>/**************************************************************************
-Function function: Ackermann inverse kinematics solution
-Entrance parameters: X-axis velocity (in m/s), left front wheel angle (in rad)
-Return value: None
-Author: WHEELTEC
-函数功能：阿克曼运动学逆解
-入口参数：X轴的速度(单位m/s)，左前轮的转角(单位rad)
-返回  值：无
-作    者：WHEELTEC
-**************************************************************************/
-static void InverseKinematics_akm(float Vx,float Vz) 
-{
-    //运动学分析前,优先采集舵机的电位器校准值,以便运动学分析结果调用
-    Akm_Servo.Bias = -get_DMA_ServoBias() / 5.0f;
-    
-    if ( ... )  // other types of ackerman cars
-    {
-        // similar calculations for other types of ackerman cars
-    }
-    else if ( robot.type==4 || robot.type==5 )  // 大车
-    {
-        //转弯半径、左轮角度
-        float TurnR = 0, Left_Angle = 0;
-        
-        //对于阿克曼小车Vz代表左前轮转向角度
-        Left_Angle = Vz;
-        
-        //限制左右转向的角度
-        const float limt_angle = 25.0f;
-        
-        //计算角度时的连杆距离K
-        const float K = 0.441f;
-        
-        //左极限的转弯半径
-        float bd_turnR = robot.HardwareParam.AxleSpacing/tan(angle_to_rad(limt_angle)) + 0.5f*K;
-        
-        //根据极限转弯半径,计算往右转时候的左轮角度
-        float bd_rightAngle = atan(robot.HardwareParam.AxleSpacing/((-bd_turnR)-0.5f*K));
-        
-        //前轮转向角度限幅(舵机控制前轮转向角度)，单位：rad
-        Left_Angle=target_limit_float(Left_Angle,bd_rightAngle,angle_to_rad(limt_angle));//注: 左+ 右-
-        
-        //滑轨目标值计算：
-        robot.SERVO.Target = SteeringStructure_Reverse(Left_Angle);
-        
-        //根据转向角度计算出当前的转弯半径
-        if(Left_Angle!=0)
-            TurnR = robot.HardwareParam.AxleSpacing/tan(Left_Angle) + 0.5f*K;
-        
-        //左右轮目标值计算：
-        //根据转弯半径、轮距,逆解出左右轮的速度
-        //Inverse kinematics //运动学逆解
-        if(Left_Angle!=0)
-        {
-            robot.MOTOR_A.Target = Vx*(TurnR-0.5f*robot.HardwareParam.WheelSpacing)/TurnR;
-            robot.MOTOR_B.Target = Vx*(TurnR+0.5f*robot.HardwareParam.WheelSpacing)/TurnR;
-        }
-        else //不带转向的控制
-        {
-            robot.MOTOR_A.Target = Vx;
-            robot.MOTOR_B.Target = Vx;
-        }
-    }
-}
-
-/**************************************************************************
-Function function: Convert the target forward velocity Vx and target angular velocity Vz sent by
-                the upper computer into the left front wheel steering angle of the Ackermann car
-Entrance parameters: target forward velocity Vx, target angular velocity Vz, unit: m/s, rad/s
-Return value: Left front wheel steering angle of Ackermann car, unit: rad
-函数功能：将上位机发过来目标前进速度Vx、目标角速度Vz，转换为阿克曼小车的左前轮转角
-入口参数：目标前进速度Vx、目标角速度Vz，单位：m/s，rad/s
-返回  值：阿克曼小车的左前轮转角，单位：rad
-**************************************************************************/
-float Akm_Vz_to_Angle(float Vx,float Vz)
-{
-    float TurnR, Angle_Left;//转弯半径,左前轮角度
-
-    if(Vz!=0 &amp;&amp; Vx!=0)
-    {
-        //计算转弯半径
-        TurnR = Vx/Vz;
-        
-        //确保转弯半径不会超出运动学公式的计算范围内
-        if( TurnR &gt; 0 &amp;&amp; TurnR &lt;= 0.5f*robot.HardwareParam.WheelSpacing ) TurnR = 0.5f*robot.HardwareParam.WheelSpacing+0.01f;
-        if( TurnR &lt; 0 &amp;&amp; TurnR &gt;= -0.5f*robot.HardwareParam.WheelSpacing ) TurnR = -0.5f*robot.HardwareParam.WheelSpacing-0.01f;
-        
-        //根据转弯半径确定左前轮转角弧度
-        Angle_Left=atan(robot.HardwareParam.AxleSpacing/(TurnR - 0.5f*robot.HardwareParam.WheelSpacing));
-
-    }
-    else
-    {
-        Angle_Left=0;
-    }
-
-    return Angle_Left;
-}</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">/**************************************************************************</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">Function function: Ackermann inverse kinematics solution</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">Entrance parameters: X-axis velocity (in m/s), left front wheel angle (in rad)</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">Return value: None</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">Author: WHEELTEC</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">函数功能：阿克曼运动学逆解</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">入口参数：X轴的速度(单位m/s)，左前轮的转角(单位rad)</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">返回  值：无</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">作    者：WHEELTEC</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">**************************************************************************/</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="dt">static</span> <span class="dt">void</span> InverseKinematics_akm<span class="op">(</span><span class="dt">float</span> Vx<span class="op">,</span><span class="dt">float</span> Vz<span class="op">)</span> </span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">//运动学分析前,优先采集舵机的电位器校准值,以便运动学分析结果调用</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    Akm_Servo<span class="op">.</span>Bias <span class="op">=</span> <span class="op">-</span>get_DMA_ServoBias<span class="op">()</span> <span class="op">/</span> <span class="fl">5.0</span><span class="bu">f</span><span class="op">;</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span> <span class="op">...</span> <span class="op">)</span>  <span class="co">// other types of ackerman cars</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        <span class="co">// similar calculations for other types of ackerman cars</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span> robot<span class="op">.</span>type<span class="op">==</span><span class="dv">4</span> <span class="op">||</span> robot<span class="op">.</span>type<span class="op">==</span><span class="dv">5</span> <span class="op">)</span>  <span class="co">// 大车</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>        <span class="co">//转弯半径、左轮角度</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>        <span class="dt">float</span> TurnR <span class="op">=</span> <span class="dv">0</span><span class="op">,</span> Left_Angle <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>        <span class="co">//对于阿克曼小车Vz代表左前轮转向角度</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>        Left_Angle <span class="op">=</span> Vz<span class="op">;</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>        <span class="co">//限制左右转向的角度</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>        <span class="dt">const</span> <span class="dt">float</span> limt_angle <span class="op">=</span> <span class="fl">25.0</span><span class="bu">f</span><span class="op">;</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>        <span class="co">//计算角度时的连杆距离K</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>        <span class="dt">const</span> <span class="dt">float</span> K <span class="op">=</span> <span class="fl">0.441</span><span class="bu">f</span><span class="op">;</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>        <span class="co">//左极限的转弯半径</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>        <span class="dt">float</span> bd_turnR <span class="op">=</span> robot<span class="op">.</span>HardwareParam<span class="op">.</span>AxleSpacing<span class="op">/</span>tan<span class="op">(</span>angle_to_rad<span class="op">(</span>limt_angle<span class="op">))</span> <span class="op">+</span> <span class="fl">0.5</span><span class="bu">f</span><span class="op">*</span>K<span class="op">;</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>        <span class="co">//根据极限转弯半径,计算往右转时候的左轮角度</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>        <span class="dt">float</span> bd_rightAngle <span class="op">=</span> atan<span class="op">(</span>robot<span class="op">.</span>HardwareParam<span class="op">.</span>AxleSpacing<span class="op">/((-</span>bd_turnR<span class="op">)-</span><span class="fl">0.5</span><span class="bu">f</span><span class="op">*</span>K<span class="op">));</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>        <span class="co">//前轮转向角度限幅(舵机控制前轮转向角度)，单位：rad</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>        Left_Angle<span class="op">=</span>target_limit_float<span class="op">(</span>Left_Angle<span class="op">,</span>bd_rightAngle<span class="op">,</span>angle_to_rad<span class="op">(</span>limt_angle<span class="op">));</span><span class="co">//注: 左+ 右-</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>        <span class="co">//滑轨目标值计算：</span></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>        robot<span class="op">.</span>SERVO<span class="op">.</span>Target <span class="op">=</span> SteeringStructure_Reverse<span class="op">(</span>Left_Angle<span class="op">);</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>        <span class="co">//根据转向角度计算出当前的转弯半径</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span><span class="op">(</span>Left_Angle<span class="op">!=</span><span class="dv">0</span><span class="op">)</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>            TurnR <span class="op">=</span> robot<span class="op">.</span>HardwareParam<span class="op">.</span>AxleSpacing<span class="op">/</span>tan<span class="op">(</span>Left_Angle<span class="op">)</span> <span class="op">+</span> <span class="fl">0.5</span><span class="bu">f</span><span class="op">*</span>K<span class="op">;</span></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>        <span class="co">//左右轮目标值计算：</span></span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>        <span class="co">//根据转弯半径、轮距,逆解出左右轮的速度</span></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>        <span class="co">//Inverse kinematics //运动学逆解</span></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span><span class="op">(</span>Left_Angle<span class="op">!=</span><span class="dv">0</span><span class="op">)</span></span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>            robot<span class="op">.</span>MOTOR_A<span class="op">.</span>Target <span class="op">=</span> Vx<span class="op">*(</span>TurnR<span class="op">-</span><span class="fl">0.5</span><span class="bu">f</span><span class="op">*</span>robot<span class="op">.</span>HardwareParam<span class="op">.</span>WheelSpacing<span class="op">)/</span>TurnR<span class="op">;</span></span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>            robot<span class="op">.</span>MOTOR_B<span class="op">.</span>Target <span class="op">=</span> Vx<span class="op">*(</span>TurnR<span class="op">+</span><span class="fl">0.5</span><span class="bu">f</span><span class="op">*</span>robot<span class="op">.</span>HardwareParam<span class="op">.</span>WheelSpacing<span class="op">)/</span>TurnR<span class="op">;</span></span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span> <span class="co">//不带转向的控制</span></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>            robot<span class="op">.</span>MOTOR_A<span class="op">.</span>Target <span class="op">=</span> Vx<span class="op">;</span></span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>            robot<span class="op">.</span>MOTOR_B<span class="op">.</span>Target <span class="op">=</span> Vx<span class="op">;</span></span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a><span class="co">/**************************************************************************</span></span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a><span class="co">Function function: Convert the target forward velocity Vx and target angular velocity Vz sent by</span></span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a><span class="co">                the upper computer into the left front wheel steering angle of the Ackermann car</span></span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a><span class="co">Entrance parameters: target forward velocity Vx, target angular velocity Vz, unit: m/s, rad/s</span></span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a><span class="co">Return value: Left front wheel steering angle of Ackermann car, unit: rad</span></span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a><span class="co">函数功能：将上位机发过来目标前进速度Vx、目标角速度Vz，转换为阿克曼小车的左前轮转角</span></span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a><span class="co">入口参数：目标前进速度Vx、目标角速度Vz，单位：m/s，rad/s</span></span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a><span class="co">返回  值：阿克曼小车的左前轮转角，单位：rad</span></span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a><span class="co">**************************************************************************/</span></span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a><span class="dt">float</span> Akm_Vz_to_Angle<span class="op">(</span><span class="dt">float</span> Vx<span class="op">,</span><span class="dt">float</span> Vz<span class="op">)</span></span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>    <span class="dt">float</span> TurnR<span class="op">,</span> Angle_Left<span class="op">;</span><span class="co">//转弯半径,左前轮角度</span></span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span><span class="op">(</span>Vz<span class="op">!=</span><span class="dv">0</span> <span class="op">&amp;&amp;</span> Vx<span class="op">!=</span><span class="dv">0</span><span class="op">)</span></span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>        <span class="co">//计算转弯半径</span></span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>        TurnR <span class="op">=</span> Vx<span class="op">/</span>Vz<span class="op">;</span></span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>        <span class="co">//确保转弯半径不会超出运动学公式的计算范围内</span></span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span><span class="op">(</span> TurnR <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> TurnR <span class="op">&lt;=</span> <span class="fl">0.5</span><span class="bu">f</span><span class="op">*</span>robot<span class="op">.</span>HardwareParam<span class="op">.</span>WheelSpacing <span class="op">)</span> TurnR <span class="op">=</span> <span class="fl">0.5</span><span class="bu">f</span><span class="op">*</span>robot<span class="op">.</span>HardwareParam<span class="op">.</span>WheelSpacing<span class="op">+</span><span class="fl">0.01</span><span class="bu">f</span><span class="op">;</span></span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span><span class="op">(</span> TurnR <span class="op">&lt;</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> TurnR <span class="op">&gt;=</span> <span class="op">-</span><span class="fl">0.5</span><span class="bu">f</span><span class="op">*</span>robot<span class="op">.</span>HardwareParam<span class="op">.</span>WheelSpacing <span class="op">)</span> TurnR <span class="op">=</span> <span class="op">-</span><span class="fl">0.5</span><span class="bu">f</span><span class="op">*</span>robot<span class="op">.</span>HardwareParam<span class="op">.</span>WheelSpacing<span class="op">-</span><span class="fl">0.01</span><span class="bu">f</span><span class="op">;</span></span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a>        <span class="co">//根据转弯半径确定左前轮转角弧度</span></span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>        Angle_Left<span class="op">=</span>atan<span class="op">(</span>robot<span class="op">.</span>HardwareParam<span class="op">.</span>AxleSpacing<span class="op">/(</span>TurnR <span class="op">-</span> <span class="fl">0.5</span><span class="bu">f</span><span class="op">*</span>robot<span class="op">.</span>HardwareParam<span class="op">.</span>WheelSpacing<span class="op">));</span></span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span></span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>        Angle_Left<span class="op">=</span><span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> Angle_Left<span class="op">;</span></span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 </section>
 <section id="wd-car-differential-steering" class="level2" data-number="2">
@@ -359,27 +394,27 @@ v_y = 0
 \omega = \frac{-v_A - v_B + v_C + v_D}{2W}
 \end{equation}\]</span></p>
 <p>Code (<strong>need corrections</strong> for <span class="math inline">\(v_y\)</span> and <span class="math inline">\(\omega\)</span> calculations):</p>
-<pre class="{c}"><code>/**************************************************************************
-Function Purpose: mec/4wd Kinematic Analysis
-Input Parameters: Robot's four-wheel speeds, in meters per second (m/s).
-Return Value: Robot's x, y, z velocities
-Author: WHEELTEC
-函数功能：麦轮/四驱 运动学正解
-入口参数：机器人四个轮的速度,单位 m/s
-返回  值：机器人x、y、z三轴速度
-作    者：WHEELTEC
-**************************************************************************/
-#elif defined MEC_CAR || defined _4WD_CAR
-static float* Kinematics_mec_4wd(float motorA,float motorB,float motorC,float motorD)
-{
-    static float vel[3];
-    //xyz三轴计算速度
-    vel[0] = (motorA+motorB+motorC+motorD)/4.0f;
-    vel[1] = (motorA-motorB+motorC-motorD)/4.0f;
-    vel[2] = (-motorA-motorB+motorC+motorD)/4.0f/( robot.HardwareParam.WheelSpacing + robot.HardwareParam.AxleSpacing );
-    
-    return vel;
-}</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">/**************************************************************************</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">Function Purpose: mec/4wd Kinematic Analysis</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">Input Parameters: Robot's four-wheel speeds, in meters per second (m/s).</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">Return Value: Robot's x, y, z velocities</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">Author: WHEELTEC</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">函数功能：麦轮/四驱 运动学正解</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">入口参数：机器人四个轮的速度,单位 m/s</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">返回  值：机器人x、y、z三轴速度</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">作    者：WHEELTEC</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">**************************************************************************/</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="pp">#elif defined MEC_CAR || defined _4WD_CAR</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="dt">static</span> <span class="dt">float</span><span class="op">*</span> Kinematics_mec_4wd<span class="op">(</span><span class="dt">float</span> motorA<span class="op">,</span><span class="dt">float</span> motorB<span class="op">,</span><span class="dt">float</span> motorC<span class="op">,</span><span class="dt">float</span> motorD<span class="op">)</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">static</span> <span class="dt">float</span> vel<span class="op">[</span><span class="dv">3</span><span class="op">];</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">//xyz三轴计算速度</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    vel<span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">=</span> <span class="op">(</span>motorA<span class="op">+</span>motorB<span class="op">+</span>motorC<span class="op">+</span>motorD<span class="op">)/</span><span class="fl">4.0</span><span class="bu">f</span><span class="op">;</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    vel<span class="op">[</span><span class="dv">1</span><span class="op">]</span> <span class="op">=</span> <span class="op">(</span>motorA<span class="op">-</span>motorB<span class="op">+</span>motorC<span class="op">-</span>motorD<span class="op">)/</span><span class="fl">4.0</span><span class="bu">f</span><span class="op">;</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    vel<span class="op">[</span><span class="dv">2</span><span class="op">]</span> <span class="op">=</span> <span class="op">(-</span>motorA<span class="op">-</span>motorB<span class="op">+</span>motorC<span class="op">+</span>motorD<span class="op">)/</span><span class="fl">4.0</span><span class="bu">f</span><span class="op">/(</span> robot<span class="op">.</span>HardwareParam<span class="op">.</span>WheelSpacing <span class="op">+</span> robot<span class="op">.</span>HardwareParam<span class="op">.</span>AxleSpacing <span class="op">);</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> vel<span class="op">;</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="inverse-kinematics-calculation-1" class="level3" data-number="2.2">
 <h3 data-number="2.2" class="anchored" data-anchor-id="inverse-kinematics-calculation-1"><span class="header-section-number">2.2</span> Inverse Kinematics Calculation</h3>
@@ -390,82 +425,82 @@ v_A = v_B = v_x - \frac{\omega W}{2}
 v_C = v_D = v_x + \frac{\omega W}{2}
 \end{equation}\]</span></p>
 <p>Code (<strong>need corrections</strong>):</p>
-<pre class="{c}"><code>/**************************************************************************
-Function function: inverse kinematics solution of four-wheel drive robot
-Entrance parameters: X-axis velocity (in m/s), Y-axis velocity (in m/s), Z-axis velocity (in rad/s)
-Return value: None
-Author  :WHEELTEC
-函数功能：四驱机器人运动学逆解
-入口参数：X轴速度(单位m/s)、Y轴速度(m/s)、Z轴速度(rad/s)
-返回  值：无
-作    者：WHEELTEC
-**************************************************************************/
-#elif defined _4WD_CAR
-static void InverseKinematics_4wd(float Vx,float Vz)
-{
-    robot.MOTOR_A.Target = Vx-Vz*(robot.HardwareParam.AxleSpacing+robot.HardwareParam.WheelSpacing);
-    robot.MOTOR_B.Target = Vx-Vz*(robot.HardwareParam.AxleSpacing+robot.HardwareParam.WheelSpacing);
-    robot.MOTOR_C.Target = Vx+Vz*(robot.HardwareParam.AxleSpacing+robot.HardwareParam.WheelSpacing);
-    robot.MOTOR_D.Target = Vx+Vz*(robot.HardwareParam.AxleSpacing+robot.HardwareParam.WheelSpacing);
-}</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">/**************************************************************************</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">Function function: inverse kinematics solution of four-wheel drive robot</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">Entrance parameters: X-axis velocity (in m/s), Y-axis velocity (in m/s), Z-axis velocity (in rad/s)</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">Return value: None</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">Author  :WHEELTEC</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">函数功能：四驱机器人运动学逆解</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">入口参数：X轴速度(单位m/s)、Y轴速度(m/s)、Z轴速度(rad/s)</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">返回  值：无</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">作    者：WHEELTEC</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">**************************************************************************/</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="pp">#elif defined _4WD_CAR</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="dt">static</span> <span class="dt">void</span> InverseKinematics_4wd<span class="op">(</span><span class="dt">float</span> Vx<span class="op">,</span><span class="dt">float</span> Vz<span class="op">)</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    robot<span class="op">.</span>MOTOR_A<span class="op">.</span>Target <span class="op">=</span> Vx<span class="op">-</span>Vz<span class="op">*(</span>robot<span class="op">.</span>HardwareParam<span class="op">.</span>AxleSpacing<span class="op">+</span>robot<span class="op">.</span>HardwareParam<span class="op">.</span>WheelSpacing<span class="op">);</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    robot<span class="op">.</span>MOTOR_B<span class="op">.</span>Target <span class="op">=</span> Vx<span class="op">-</span>Vz<span class="op">*(</span>robot<span class="op">.</span>HardwareParam<span class="op">.</span>AxleSpacing<span class="op">+</span>robot<span class="op">.</span>HardwareParam<span class="op">.</span>WheelSpacing<span class="op">);</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    robot<span class="op">.</span>MOTOR_C<span class="op">.</span>Target <span class="op">=</span> Vx<span class="op">+</span>Vz<span class="op">*(</span>robot<span class="op">.</span>HardwareParam<span class="op">.</span>AxleSpacing<span class="op">+</span>robot<span class="op">.</span>HardwareParam<span class="op">.</span>WheelSpacing<span class="op">);</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    robot<span class="op">.</span>MOTOR_D<span class="op">.</span>Target <span class="op">=</span> Vx<span class="op">+</span>Vz<span class="op">*(</span>robot<span class="op">.</span>HardwareParam<span class="op">.</span>AxleSpacing<span class="op">+</span>robot<span class="op">.</span>HardwareParam<span class="op">.</span>WheelSpacing<span class="op">);</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 </section>
 <section id="appendix-values-of-parameters" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="appendix-values-of-parameters">Appendix: Values of Parameters</h2>
 <section id="ackerman-car-当前车型顶配独立悬挂阿克曼" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="ackerman-car-当前车型顶配独立悬挂阿克曼">Ackerman Car (当前车型：顶配独立悬挂阿克曼)</h3>
-<pre class="{c}"><code>#if defined AKM_CAR
-    //阿克曼小车拥有的车型数量
-    #define CAR_NUMBER    10    
-    //Wheel_spacing //轮距
-    #define   SENIOR_AKM_wheelspacing  0.322f //高配阿克曼
-    #define   TOP_AKM_BS_wheelspacing  0.508f //顶配摆式悬挂阿克曼
-    #define   TOP_AKM_DL_wheelspacing  0.585f //顶配独立悬挂阿克曼
-    
-    //Axle_spacing //轴距
-    #define   SENIOR_AKM_axlespacing   0.322f //高配阿克曼
-    #define   TOP_AKM_BS_axlespacing   0.590f //顶配摆式悬挂阿克曼
-    #define   TOP_AKM_DL_axlespacing   0.530f //顶配独立悬挂阿克曼
-    
-    //Diameter of trolley tire
-    //小车轮胎直径
-    #define   SENIOR_AKM_WheelDiameter  0.125 //高配阿克曼
-    #define   TOP_AKM_BS_WheelDiameter  0.180 //顶配摆式悬挂阿克曼
-    #define   TOP_AKM_DL_WheelDiameter  0.254 //顶配独立悬挂阿克曼
-
-    //The minimum turning radius of different Ackermann models is determined by the mechanical structure:
-    //the maximum Angle of the wheelbase, wheelbase and front wheel
-    //不同阿克曼车型的最小转弯半径，由机械结构决定：轮距、轴距、前轮最大转角
-    #define   SENIOR_AKM_MIN_TURN_RADIUS  0.750f //高配阿克曼
-    #define   TOP_AKM_BS_MIN_TURN_RADIUS  1.400f //顶配摆式悬挂阿克曼
-    #define   TOP_AKM_DL_MIN_TURN_RADIUS  1.200f //顶配独立悬挂阿克曼</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#if defined AKM_CAR</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">//阿克曼小车拥有的车型数量</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define CAR_NUMBER    </span><span class="dv">10</span><span class="pp">    </span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">//Wheel_spacing //轮距</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define   SENIOR_AKM_wheelspacing  </span><span class="fl">0.322</span><span class="bu">f</span><span class="pp"> </span><span class="co">//高配阿克曼</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define   TOP_AKM_BS_wheelspacing  </span><span class="fl">0.508</span><span class="bu">f</span><span class="pp"> </span><span class="co">//顶配摆式悬挂阿克曼</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define   TOP_AKM_DL_wheelspacing  </span><span class="fl">0.585</span><span class="bu">f</span><span class="pp"> </span><span class="co">//顶配独立悬挂阿克曼</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">//Axle_spacing //轴距</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define   SENIOR_AKM_axlespacing   </span><span class="fl">0.322</span><span class="bu">f</span><span class="pp"> </span><span class="co">//高配阿克曼</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define   TOP_AKM_BS_axlespacing   </span><span class="fl">0.590</span><span class="bu">f</span><span class="pp"> </span><span class="co">//顶配摆式悬挂阿克曼</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define   TOP_AKM_DL_axlespacing   </span><span class="fl">0.530</span><span class="bu">f</span><span class="pp"> </span><span class="co">//顶配独立悬挂阿克曼</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">//Diameter of trolley tire</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">//小车轮胎直径</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define   SENIOR_AKM_WheelDiameter  </span><span class="fl">0.125</span><span class="pp"> </span><span class="co">//高配阿克曼</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define   TOP_AKM_BS_WheelDiameter  </span><span class="fl">0.180</span><span class="pp"> </span><span class="co">//顶配摆式悬挂阿克曼</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define   TOP_AKM_DL_WheelDiameter  </span><span class="fl">0.254</span><span class="pp"> </span><span class="co">//顶配独立悬挂阿克曼</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="co">//The minimum turning radius of different Ackermann models is determined by the mechanical structure:</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    <span class="co">//the maximum Angle of the wheelbase, wheelbase and front wheel</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="co">//不同阿克曼车型的最小转弯半径，由机械结构决定：轮距、轴距、前轮最大转角</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define   SENIOR_AKM_MIN_TURN_RADIUS  </span><span class="fl">0.750</span><span class="bu">f</span><span class="pp"> </span><span class="co">//高配阿克曼</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define   TOP_AKM_BS_MIN_TURN_RADIUS  </span><span class="fl">1.400</span><span class="bu">f</span><span class="pp"> </span><span class="co">//顶配摆式悬挂阿克曼</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define   TOP_AKM_DL_MIN_TURN_RADIUS  </span><span class="fl">1.200</span><span class="bu">f</span><span class="pp"> </span><span class="co">//顶配独立悬挂阿克曼</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="wd-car-当前车型高配摆式" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="wd-car-当前车型高配摆式">4WD Car (当前车型：高配摆式)</h3>
-<pre class="{c}"><code>#elif defined _4WD_CAR
-    //四驱小车的车型数量
-    #define CAR_NUMBER    13    
-    //half wheelspacing //半轮距
-    #define SENIOR_4WD_BS_wheelspacing   0.176 //高配摆式常规、重载
-    #define SENIOR_4WD_DL_wheelspacing   0.230 //高配独立常规
-    #define TOP_4WD_BS_wheelspacing      0.311 //顶配摆式常规、重载
-    #define TOP_4WD_DL_wheelspacing      0.295 //顶配独立常规、重载
-    #define FlagShip_4WD_BS_wheelspacing 0.286 //旗舰摆式常规、重载
-    #define FlagShip_4WD_DL_wheelspacing 0.24  //旗舰独立常规、重载
-
-    //half axlespacing //半轴距
-    #define SENIOR_4WD_BS_axlespacing   0.150 //高配摆式常规、重载
-    #define SENIOR_4WD_DL_axlespacing   0.20  //高配独立常规
-    #define TOP_4WD_BS_axlespacing      0.308 //顶配摆式常规、重载
-    #define TOP_4WD_DL_axlespacing      0.201 //顶配独立常规、重载
-    #define FlagShip_4WD_BS_axlespacing 0.167 //旗舰摆式常规、重载
-    #define FlagShip_4WD_DL_axlespacing 0.14  //旗舰独立常规、重载
-
-    //4WD wheel tire diameter series
-    //四驱车轮胎直径
-    #define  WheelDiameter_4WD_152  0.152f //高配
-    #define  WheelDiameter_4WD_225  0.225f //顶配 &amp; 旗舰
-    #define  WheelDiameter_4WD_250  0.250f</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#elif defined _4WD_CAR</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">//四驱小车的车型数量</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define CAR_NUMBER    </span><span class="dv">13</span><span class="pp">    </span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">//half wheelspacing //半轮距</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define SENIOR_4WD_BS_wheelspacing   </span><span class="fl">0.176</span><span class="pp"> </span><span class="co">//高配摆式常规、重载</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define SENIOR_4WD_DL_wheelspacing   </span><span class="fl">0.230</span><span class="pp"> </span><span class="co">//高配独立常规</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define TOP_4WD_BS_wheelspacing      </span><span class="fl">0.311</span><span class="pp"> </span><span class="co">//顶配摆式常规、重载</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define TOP_4WD_DL_wheelspacing      </span><span class="fl">0.295</span><span class="pp"> </span><span class="co">//顶配独立常规、重载</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define FlagShip_4WD_BS_wheelspacing </span><span class="fl">0.286</span><span class="pp"> </span><span class="co">//旗舰摆式常规、重载</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define FlagShip_4WD_DL_wheelspacing </span><span class="fl">0.24</span><span class="pp">  </span><span class="co">//旗舰独立常规、重载</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">//half axlespacing //半轴距</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define SENIOR_4WD_BS_axlespacing   </span><span class="fl">0.150</span><span class="pp"> </span><span class="co">//高配摆式常规、重载</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define SENIOR_4WD_DL_axlespacing   </span><span class="fl">0.20</span><span class="pp">  </span><span class="co">//高配独立常规</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define TOP_4WD_BS_axlespacing      </span><span class="fl">0.308</span><span class="pp"> </span><span class="co">//顶配摆式常规、重载</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define TOP_4WD_DL_axlespacing      </span><span class="fl">0.201</span><span class="pp"> </span><span class="co">//顶配独立常规、重载</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define FlagShip_4WD_BS_axlespacing </span><span class="fl">0.167</span><span class="pp"> </span><span class="co">//旗舰摆式常规、重载</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define FlagShip_4WD_DL_axlespacing </span><span class="fl">0.14</span><span class="pp">  </span><span class="co">//旗舰独立常规、重载</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    <span class="co">//4WD wheel tire diameter series</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="co">//四驱车轮胎直径</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define  WheelDiameter_4WD_152  </span><span class="fl">0.152</span><span class="bu">f</span><span class="pp"> </span><span class="co">//高配</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define  WheelDiameter_4WD_225  </span><span class="fl">0.225</span><span class="bu">f</span><span class="pp"> </span><span class="co">//顶配 &amp; 旗舰</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define  WheelDiameter_4WD_250  </span><span class="fl">0.250</span><span class="bu">f</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Notice that the wheel spacing and axle spacing for 4WD cars are <strong>half values</strong>, <span class="math inline">\(\frac{W}{2}\)</span> and <span class="math inline">\(\frac{L}{2}\)</span>.</p>
 
 
