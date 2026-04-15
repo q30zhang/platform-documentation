@@ -68,6 +68,8 @@ v_R = v_x + \frac{\omega W}{2}
 \delta_l = \mathrm{atan}\frac{L}{\frac{v_x}{\omega} - \frac{W}{2}}
 \end{equation}
 
+Code:
+
 ```c
 /**************************************************************************
 Function function: Ackermann inverse kinematics solution
