@@ -4,14 +4,23 @@ project:
 
 website:
   title: "Platform Documentation"
-  navbar:
-    left:
-      - href: index.qmd
-        text: Home
-      - href: about.qmd
-        text: About
-      - href: code_kinematics.qmd
-        text: Kinematics Code
+  sidebar:
+    style: "docked"
+    search: true
+    alignment: left
+    contents:
+    - section: "Documentation"
+      contents:
+        - href: tutorials.qmd
+          text: Tutorials
+        - href: ubuntu_basics.qmd
+          text: Ubuntu Basics
+        - href: car_maintenance.qmd
+          text: Car Maintenance
+    - section: "Reference Codes"
+      contents:
+        - href: code_kinematics.qmd
+          text: Kinematics Code
 
 format:
   html:
@@ -23,8 +32,8 @@ format:
     number-depth: 5
     theme:
       - cosmo
-      - brand
-    css: styles.css
+      # - brand
+      - styles.scss
 
 
 
